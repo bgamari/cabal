@@ -770,6 +770,9 @@ data KnownExtension =
   -- as injective.
   | TypeFamilyDependencies
 
+  -- | Allow use of hexadecimal literal notation for floating-point values.
+  | HexFloatLiterals
+
   deriving (Generic, Show, Read, Eq, Ord, Enum, Bounded, Typeable, Data)
 
 instance Binary KnownExtension
