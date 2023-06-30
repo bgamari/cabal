@@ -264,7 +264,7 @@ updateRepo verbosity _updateFlags repoCtxt (repo, indexState) = do
       current_ts <- currentIndexTimestamp (lessVerbose verbosity) repoCtxt repo
       -- NB: always update the timestamp, even if we didn't actually
       -- download anything
-      writeIndexTimestamp index indexState
+      writeIndexTimestamp verbosity index indexState
       ce <-
         if repoContextIgnoreExpiry repoCtxt
           then Just `fmap` getCurrentTime

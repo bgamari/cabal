@@ -1144,6 +1144,12 @@ readNoIndexCache verbosity index = do
     -- we don't hash cons local repository cache, they are hopefully small
     Right res -> return res
 
+ensureIndexDirExists :: Verbosity -> Index -> IO ()
+ensureIndexDirExists verbosity index = do
+  putStrLn path
+  createDirectoryIfMissingVerbose verbosity True path
+  where path = takeDirectory (timestampFile index)
+
 -- | Read the 'Index' cache from the filesystem without attempting to
 -- regenerate on parsing failures.
 readIndexCache' :: Index -> IO (Either String Cache)
@@ -1164,13 +1170,13 @@ writeIndexCache index cache
 
 writeNoIndexCache :: Verbosity -> Index -> NoIndexCache -> IO ()
 writeNoIndexCache verbosity index cache = do
-  let path = cacheFile index
-  createDirectoryIfMissingVerbose verbosity True (takeDirectory path)
-  structuredEncodeFile path cache
+  ensureIndexDirExists verbosity index
+  structuredEncodeFile (cacheFile index) cache
 
 -- | Write the 'IndexState' to the filesystem
-writeIndexTimestamp :: Index -> RepoIndexState -> IO ()
-writeIndexTimestamp index st =
+writeIndexTimestamp :: Verbosity -> Index -> RepoIndexState -> IO ()
+writeIndexTimestamp verbosity index st = do
+  ensureIndexDirExists verbosity index
   writeFile (timestampFile index) (prettyShow st)
 
 -- | Read out the "current" index timestamp, i.e., what
